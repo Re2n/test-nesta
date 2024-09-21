@@ -1,1 +1,0 @@
-{"version":3,"file":"post.mapper.js","sourceRoot":"","sources":["../../../src/posts/mappers/post.mapper.ts"],"names":[],"mappings":";;AAGA,oCAMC;AAND,SAAgB,YAAY,CAAC,EAAc;IACvC,OAAM;QACF,EAAE,EAAE,EAAE,CAAC,EAAE;QACT,UAAU,EAAE,EAAE,CAAC,UAAU;QACzB,OAAO,EAAE,EAAE,CAAC,OAAO;KACX,CAAC;AACjB,CAAC"}
