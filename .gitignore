@@ -1,3 +1,5 @@
+dist
 node_modules
+test
 # Keep environment variables out of version control
 .env

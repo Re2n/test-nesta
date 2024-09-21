@@ -2,6 +2,6 @@
 
 export class PostEntity implements Post{
     id: number;
-    comment_id: number[];
-    user_id: number;
+    content: string;
+    creatorid: number;
 }

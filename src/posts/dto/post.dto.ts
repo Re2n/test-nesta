@@ -8,14 +8,14 @@ export class PostDto{
     id: number;
     
     @ApiProperty({
-        description: 'Array of comment id',
-        type: [Number],
+        description: 'Content of the post',
+        type: String,
     })
-    comment_id: number[];
+    content: string;
     
     @ApiProperty({
-        description: 'Identifier of the creator post',
+        description: 'Identifier of the user who created the post',
         type: Number,
     })
-    user_id: number;
+    creatorid: number;
 }
