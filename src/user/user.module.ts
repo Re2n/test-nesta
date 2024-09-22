@@ -1,21 +1,19 @@
 import {forwardRef, Module} from '@nestjs/common';
-import { CommentService } from './comment.service';
-import {CommentController} from "./comment.controller";
+import { UserService } from './user.service';
+import {UserController} from "./user.controller";
 import {PrismaModule} from "../prisma/prisma.module";
-import {UserModule} from "../user/user.module";
-import {PostModule} from "../posts/post.module";
 import {JwtModule} from "@nestjs/jwt";
 import {ConfigModule, ConfigService} from "@nestjs/config";
+import {PostModule} from "../posts/post.module";
+import {CommentModule} from "../comment/comment.module";
 
 @Module({
-  controllers: [CommentController],
-  providers: [CommentService],
+  controllers: [UserController],
+  providers: [UserService],
   imports: [
       PrismaModule,
-      forwardRef(() => UserModule),
-      forwardRef(() => PostModule),
       JwtModule.registerAsync({
-          imports: [ConfigModule],
+          imports: [ConfigModule], 
           inject: [ConfigService],
           useFactory: (config: ConfigService) => ({
               global: true,
@@ -23,7 +21,9 @@ import {ConfigModule, ConfigService} from "@nestjs/config";
               signOptions: {expiresIn: '7d'},
           }),
       }),
-  ],
-    exports: [CommentService],
+      forwardRef(() => PostModule),
+      CommentModule,
+  ], 
+    exports: [UserService],
 })
-export class CommentModule {}
+export class UserModule {}
