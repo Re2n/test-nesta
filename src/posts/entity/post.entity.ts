@@ -1,7 +1,7 @@
-﻿import {Post} from '@prisma/client'
+﻿import { Post } from '@prisma/client';
 
-export class PostEntity implements Post{
-    id: number;
-    content: string;
-    creatorid: number;
+export class PostEntity implements Post {
+  id: number;
+  content: string;
+  creatorid: number;
 }
