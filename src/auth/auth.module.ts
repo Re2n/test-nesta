@@ -11,22 +11,22 @@ import { RightGuardPost } from './guard/right.guard.post';
 import { AuthController } from './auth.controller';
 
 @Module({
-  imports: [
-    UserModule,
-    CommentModule,
-    PostModule,
-    ConfigModule.forRoot(),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        global: true,
-        secret: config.getOrThrow('JWT_SECRET'),
-        signOptions: { expiresIn: '7d' },
-      }),
-    }),
-  ],
-  providers: [AuthService, AuthGuard, RightGuardComment, RightGuardPost],
-  controllers: [AuthController],
+    imports: [
+        UserModule,
+        CommentModule,
+        PostModule,
+        ConfigModule.forRoot(),
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => ({
+                global: true,
+                secret: config.getOrThrow('JWT_SECRET'),
+                signOptions: { expiresIn: '7d' },
+            }),
+        }),
+    ],
+    providers: [AuthService, AuthGuard, RightGuardComment, RightGuardPost],
+    controllers: [AuthController],
 })
 export class AuthModule {}

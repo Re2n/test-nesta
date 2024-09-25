@@ -3,23 +3,23 @@ import { ApiExtraModels, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
 import { ArrayResponse } from './array.response';
 
 export const ApiOkArrayResponse = <DataDto extends Type<unknown>>(
-  dataDto: DataDto,
+    dataDto: DataDto,
 ) =>
-  applyDecorators(
-    ApiExtraModels(ArrayResponse, dataDto),
-    ApiOkResponse({
-      schema: {
-        allOf: [
-          { $ref: getSchemaPath(ArrayResponse) },
-          {
-            properties: {
-              data: {
-                type: 'array',
-                items: { $ref: getSchemaPath(dataDto) },
-              },
+    applyDecorators(
+        ApiExtraModels(ArrayResponse, dataDto),
+        ApiOkResponse({
+            schema: {
+                allOf: [
+                    { $ref: getSchemaPath(ArrayResponse) },
+                    {
+                        properties: {
+                            data: {
+                                type: 'array',
+                                items: { $ref: getSchemaPath(dataDto) },
+                            },
+                        },
+                    },
+                ],
             },
-          },
-        ],
-      },
-    }),
-  );
+        }),
+    );

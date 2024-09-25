@@ -7,90 +7,93 @@ import { PostUpdateDto } from './dto/post.update.dto';
 
 @Injectable()
 export class PostService {
-  constructor(private readonly prisma: PrismaService) {}
+    constructor(private readonly prisma: PrismaService) {}
 
-  async create(params: {
-    data: PostCreateDto;
-    creatorId: number;
-  }): Promise<PostDto> {
-    const { data, creatorId } = params;
+    async create(params: {
+        data: PostCreateDto;
+        creatorId: number;
+    }): Promise<PostDto> {
+        const { data, creatorId } = params;
 
-    const dbPost = await this.prisma.post.create({
-      data: {
-        content: data.content,
-        creatorid: creatorId,
-      },
-    });
+        const dbPost = await this.prisma.post.create({
+            data: {
+                content: data.content,
+                creatorid: creatorId,
+            },
+        });
 
-    return mapToPostDto(dbPost);
-  }
-
-  async assertPostExists(params: { id: number }) {
-    const { id } = params;
-
-    const dbPost = await this.prisma.post.findUnique({
-      where: { id },
-    });
-
-    if (!dbPost) {
-      throw new NotFoundException(`Post with id ${id} does not exists`);
-    }
-  }
-
-  async getById(params: { id: number }): Promise<PostDto> {
-    const { id } = params;
-
-    const dbPost = await this.prisma.post.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    if (!dbPost) {
-      throw new NotFoundException(`Post with id ${id} does not exist`);
+        return mapToPostDto(dbPost);
     }
 
-    return mapToPostDto(dbPost);
-  }
+    async assertPostExists(params: { id: number }) {
+        const { id } = params;
 
-  async update(params: { data: PostUpdateDto; id: number }): Promise<PostDto> {
-    const { data, id } = params;
+        const dbPost = await this.prisma.post.findUnique({
+            where: { id },
+        });
 
-    await this.assertPostExists({ id });
+        if (!dbPost) {
+            throw new NotFoundException(`Post with id ${id} does not exists`);
+        }
+    }
 
-    const updatedPost = await this.prisma.post.update({
-      where: { id },
-      data: { content: data.content },
-    });
+    async getById(params: { id: number }): Promise<PostDto> {
+        const { id } = params;
 
-    return mapToPostDto(updatedPost);
-  }
+        const dbPost = await this.prisma.post.findUnique({
+            where: {
+                id,
+            },
+        });
 
-  async getAll(): Promise<PostDto[]> {
-    const posts = await this.prisma.post.findMany();
+        if (!dbPost) {
+            throw new NotFoundException(`Post with id ${id} does not exist`);
+        }
 
-    return posts.map(mapToPostDto);
-  }
+        return mapToPostDto(dbPost);
+    }
 
-  async getAllByCreatorId(params: { creatorId: number }): Promise<PostDto[]> {
-    const { creatorId } = params;
+    async update(params: {
+        data: PostUpdateDto;
+        id: number;
+    }): Promise<PostDto> {
+        const { data, id } = params;
 
-    const posts = await this.prisma.post.findMany({
-      where: { creatorid: creatorId },
-    });
+        await this.assertPostExists({ id });
 
-    return posts.map(mapToPostDto);
-  }
+        const updatedPost = await this.prisma.post.update({
+            where: { id },
+            data: { content: data.content },
+        });
 
-  async delete(params: { id: number }): Promise<PostDto> {
-    const { id } = params;
+        return mapToPostDto(updatedPost);
+    }
 
-    await this.assertPostExists({ id });
+    async getAll(): Promise<PostDto[]> {
+        const posts = await this.prisma.post.findMany();
 
-    const deletedPost = await this.prisma.post.delete({
-      where: { id },
-    });
+        return posts.map(mapToPostDto);
+    }
 
-    return mapToPostDto(deletedPost);
-  }
+    async getAllByCreatorId(params: { creatorId: number }): Promise<PostDto[]> {
+        const { creatorId } = params;
+
+        const posts = await this.prisma.post.findMany({
+            where: { creatorid: creatorId },
+        });
+
+        return posts.map(mapToPostDto);
+    }
+
+    async delete(params: { id: number }): Promise<PostDto> {
+        const { id } = params;
+
+        await this.assertPostExists({ id });
+
+        const deletedPost = await this.prisma.post.delete({
+            where: { id },
+        });
+
+        return mapToPostDto(deletedPost);
+    }
 }

@@ -8,22 +8,22 @@ import { PostModule } from '../posts/post.module';
 import { CommentModule } from '../comment/comment.module';
 
 @Module({
-  controllers: [UserController],
-  providers: [UserService],
-  imports: [
-    PrismaModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        global: true,
-        secret: config.getOrThrow('JWT_SECRET'),
-        signOptions: { expiresIn: '7d' },
-      }),
-    }),
-    forwardRef(() => PostModule),
-    CommentModule,
-  ],
-  exports: [UserService],
+    controllers: [UserController],
+    providers: [UserService],
+    imports: [
+        PrismaModule,
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => ({
+                global: true,
+                secret: config.getOrThrow('JWT_SECRET'),
+                signOptions: { expiresIn: '7d' },
+            }),
+        }),
+        forwardRef(() => PostModule),
+        CommentModule,
+    ],
+    exports: [UserService],
 })
 export class UserModule {}

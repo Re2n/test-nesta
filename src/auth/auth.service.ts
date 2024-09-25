@@ -1,7 +1,7 @@
 import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
+    BadRequestException,
+    Injectable,
+    NotFoundException,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -14,76 +14,79 @@ import { UserDto } from '../user/dto/user.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly userService: UserService,
-    private readonly jwtService: JwtService,
-  ) {}
+    constructor(
+        private readonly userService: UserService,
+        private readonly jwtService: JwtService,
+    ) {}
 
-  async register(params: { data: UserRegisterDto }): Promise<TokenDto> {
-    const { data } = params;
+    async register(params: { data: UserRegisterDto }): Promise<TokenDto> {
+        const { data } = params;
 
-    const dbUser = await this.userService.getByUsername({
-      username: data.username,
-    });
+        const dbUser = await this.userService.getByUsername({
+            username: data.username,
+        });
 
-    if (!!dbUser) {
-      throw new BadRequestException(
-        `User with username ${data.username} already exists`,
-      );
+        if (!!dbUser) {
+            throw new BadRequestException(
+                `User with username ${data.username} already exists`,
+            );
+        }
+
+        data.password = bcrypt.hashSync(data.password, 10);
+
+        const newUser = await this.userService.create({ data });
+
+        const payload = { sub: newUser.id };
+
+        return {
+            accessToken: await this.jwtService.signAsync(payload),
+        };
     }
 
-    data.password = bcrypt.hashSync(data.password, 10);
+    async signIn(params: { data: UserSignInDto }): Promise<TokenDto> {
+        const { data } = params;
 
-    const newUser = await this.userService.create({ data });
+        const dbUser = await this.userService.getByUsername({
+            username: data.username,
+        });
 
-    const payload = { sub: newUser.id };
+        if (!dbUser) {
+            throw new NotFoundException(
+                `User with username ${data.username} already exists`,
+            );
+        }
 
-    return {
-      accessToken: await this.jwtService.signAsync(payload),
-    };
-  }
+        const payload = { sub: dbUser.id };
 
-  async signIn(params: { data: UserSignInDto }): Promise<TokenDto> {
-    const { data } = params;
-
-    const dbUser = await this.userService.getByUsername({
-      username: data.username,
-    });
-
-    if (!dbUser) {
-      throw new NotFoundException(
-        `User with username ${data.username} already exists`,
-      );
+        return {
+            accessToken: await this.jwtService.signAsync(payload),
+        };
     }
 
-    const payload = { sub: dbUser.id };
+    async update(params: {
+        id: number;
+        data: UserUpdateDto;
+    }): Promise<UserDto> {
+        const { data, id } = params;
 
-    return {
-      accessToken: await this.jwtService.signAsync(payload),
-    };
-  }
+        await this.userService.getById({ id });
 
-  async update(params: { id: number; data: UserUpdateDto }): Promise<UserDto> {
-    const { data, id } = params;
+        if (data.username) {
+            const dbUser = await this.userService.getByUsername({
+                username: data.username,
+            });
 
-    await this.userService.getById({ id });
+            if (!!dbUser && dbUser.id !== id) {
+                throw new BadRequestException(
+                    `User with username ${data.username} already exists`,
+                );
+            }
+        }
 
-    if (data.username) {
-      const dbUser = await this.userService.getByUsername({
-        username: data.username,
-      });
+        if (data.password) {
+            data.password = bcrypt.hashSync(data.password, 10);
+        }
 
-      if (!!dbUser && dbUser.id !== id) {
-        throw new BadRequestException(
-          `User with username ${data.username} already exists`,
-        );
-      }
+        return this.userService.update({ id, data });
     }
-
-    if (data.password) {
-      data.password = bcrypt.hashSync(data.password, 10);
-    }
-
-    return this.userService.update({ id, data });
-  }
 }
